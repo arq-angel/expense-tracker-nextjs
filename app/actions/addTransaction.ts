@@ -4,20 +4,21 @@ import {db} from "@/lib/db";
 import {revalidatePath} from "next/cache";
 
 interface TransactionData {
-    text: string,
-    amount: number,
+    text: string;
+    amount: number;
+    userId: string;
 }
 
 interface TransactionResult {
     data?: TransactionData;
-    error?: String;
+    error?: string;
 }
 
 async function addTransaction(formData: FormData): Promise<TransactionResult> {
     const textValue = formData.get('text');
     const amountValue = formData.get('amount');
 
-    // check for input values
+    // Check for input values
     if (!textValue || textValue === '' || amountValue === '') {
         return {
             error: 'Text or amount is missing',
@@ -27,18 +28,17 @@ async function addTransaction(formData: FormData): Promise<TransactionResult> {
     // Get logged in user
     const {userId} = auth();
 
-    // check for user
+    // Check for user
     if (!userId) {
         return {error: 'User not found'};
     }
 
-    const text: string = textValue.toString(); // ensure text is a string
-    // @ts-ignore
-    const amount: number = parseFloat(amountValue.toString()); // parse amount as number
+    const text: string = textValue.toString(); // Ensure text is a string
+    const amount: number = parseFloat(amountValue.toString()); // Parse amount as number
 
     try {
-        // @ts-ignore
-        const transactionData: TransactionResult = await db.transaction.create({
+        // Explicitly define the type of transactionData to match TransactionData
+        const transactionData: TransactionData = await db.transaction.create({
             data: {
                 text,
                 amount,
@@ -48,11 +48,11 @@ async function addTransaction(formData: FormData): Promise<TransactionResult> {
 
         revalidatePath('/');
 
+        // Correctly return the data structure
         return {data: transactionData};
     } catch (error) {
         return {error: "Transaction not added"};
     }
-
 }
 
 export default addTransaction;
