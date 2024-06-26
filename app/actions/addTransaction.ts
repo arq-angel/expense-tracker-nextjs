@@ -34,7 +34,7 @@ async function addTransaction(formData: FormData): Promise<TransactionResult> {
     }
 
     const text: string = textValue.toString(); // Ensure text is a string
-    const amount: number = parseFloat(amountValue.toString()); // Parse amount as number
+    const amount: number = parseFloat((amountValue ?? '').toString()); // Parse amount as number
 
     try {
         // Explicitly define the type of transactionData to match TransactionData

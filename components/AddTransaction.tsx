@@ -13,7 +13,9 @@ const AddTransaction = () => {
             toast.error(error);
         } else {
             toast.success("Transaction successfully added!");
-            formRef.current.reset();
+            if (formRef.current) {
+                formRef.current.reset();
+            }
         }
     }
 
